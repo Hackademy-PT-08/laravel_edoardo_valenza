@@ -1,17 +1,45 @@
-<!-- FORM CREAZIONE ARTICOLO -->
+<x-layout>
 
-<h1>Aggiungi nuovo articolo</h1>
+    <!-- OUTPUT ERRORI VALIDAZIONE FORM -->
 
-<form action="/articoli/aggiungi" method="post">
+    @if ($errors->any())
 
-    @csrf
+        @error('titolo') Test errore titolo @enderror
 
-    <input type="text" name="titolo" placeholder="Titolo dell'articolo">
+        @foreach ($errors->all() as $error)
+        
+            <p style="color: red;">{{$error}}</p>
 
-    <textarea name="contenuto" cols="30" rows="10" placeholder="Testo dell'articolo"></textarea>
+        @endforeach
+        
+    @endif
+    
+    <!-- FORM CREAZIONE ARTICOLO -->
 
-    <input type="submit" value="Aggiungi">
+    <h1>Aggiungi nuovo articolo</h1>
 
-    <a href="/">Annulla</a>
+    <form action="/articoli/aggiungi" method="post" enctype="multipart/form-data">
 
-</form>
+        @csrf
+
+        <label for="titolo">Titolo *</label>
+
+        <input type="text" name="titolo" id="titolo" placeholder="Titolo dell'articolo" value="{{old('titolo')}}" required>
+
+        <label for="contenuto">Contenuto *</label>
+
+        <textarea name="contenuto" id="contenuto" cols="30" rows="10" placeholder="Testo dell'articolo" required>{{old('contenuto')}}</textarea>
+
+        <label for="immagine">Immagine</label>
+
+        <input type="file" name="immagine" id="immagine">
+
+        <p class="small">I campi contrassegnati con * sono obbligatori</p>
+
+        <input type="submit" value="Aggiungi">
+
+        <a href="/">Annulla</a>
+
+    </form>
+
+</x-layout>
