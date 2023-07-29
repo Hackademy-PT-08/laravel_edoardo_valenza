@@ -41,7 +41,7 @@ class ArticleController extends Controller
 
         $article->save();
 
-        return redirect('/');
+        return redirect()->route('home');
 
     }
 }

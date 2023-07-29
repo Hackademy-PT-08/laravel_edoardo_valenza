@@ -18,7 +18,7 @@
 
     <h1>Aggiungi nuovo articolo</h1>
 
-    <form action="/articoli/aggiungi" method="post" enctype="multipart/form-data">
+    <form action="{{route('articles.store')}}" method="post" enctype="multipart/form-data">
 
         @csrf
 
