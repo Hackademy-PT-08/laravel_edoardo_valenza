@@ -2,6 +2,7 @@
 
     <ul>
         <li><a href="{{route('home')}}">Home</a></li>
+        <li><a href="{{route('articles.index')}}">Articoli</a></li>
         <li><a href="{{route('articles.create')}}">Nuovo articolo</a></li>
 
         @if (!auth()->check())

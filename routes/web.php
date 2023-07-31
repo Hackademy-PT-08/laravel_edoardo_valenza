@@ -23,8 +23,39 @@ Route::get('/', [HomeController::class, 'index'])
 Route::get('/articoli/aggiungi', [ArticleController::class, 'create'])
 ->name('articles.create');
 
+
+
+
+
+
+
+//Ottieni tutti gli articoli
+Route::get('/articoli', [ArticleController::class, 'index'])
+->name('articles.index');
+
+//Creazione di un nuovo articolo
 Route::post('/articoli/aggiungi', [ArticleController::class, 'store'])
 ->name('articles.store');
+
+//Mostro il form di aggiornamento articolo
+Route::get('/articoli/modifica/{id}', [ArticleController::class, 'edit'])
+->name('articles.edit');
+
+//Aggiornamento di un articolo esistente
+Route::put('/articoli/modifica/{id}', [ArticleController::class, 'update'])
+->name('articles.update');
+
+//Eliminazione di un articolo esistente
+Route::delete('/articoli/elimina/{id}', [ArticleController::class, 'destroy'])
+->name('articles.delete');
+
+
+
+
+
+
+
+
 
 Route::get('/profilo', [UserController::class, 'index'])
 ->middleware(['auth', 'verified'])
