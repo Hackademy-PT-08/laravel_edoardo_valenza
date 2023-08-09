@@ -16,6 +16,8 @@
 
         <p>{{$article->content}}</p>
 
+        <p>Autore: {{$article->user->name}}</p>
+
         <br>
 
     @endforeach

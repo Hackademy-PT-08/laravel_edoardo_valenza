@@ -1,5 +1,7 @@
 <x-layout>
 
+    <p><a href="{{route('tags.create')}}">Aggiungi nuovo tag</a></p>
+
     <!-- OUTPUT ERRORI VALIDAZIONE FORM -->
 
     @if ($errors->any())
@@ -32,7 +34,19 @@
 
         <label for="immagine">Immagine</label>
 
-        <input type="file" name="immagine" id="immagine">
+        <input type="file" name="immagine[]" id="immagine" multiple>
+
+        <label for="tag">Tag</label>
+
+        <select name="tag[]" id="tag" multiple>
+
+            @foreach ($tags as $tag)
+            
+                <option value="{{$tag->id}}">{{$tag->name}}</option>
+
+            @endforeach
+
+        </select>
 
         <p class="small">I campi contrassegnati con * sono obbligatori</p>
 

@@ -3,7 +3,6 @@
     <ul>
         <li><a href="{{route('home')}}">Home</a></li>
         <li><a href="{{route('articles.index')}}">Articoli</a></li>
-        <li><a href="{{route('articles.create')}}">Nuovo articolo</a></li>
 
         @if (!auth()->check())
 
@@ -12,6 +11,8 @@
 
         @else
         
+            <li><a href="{{route('articles.create')}}">Nuovo articolo</a></li>
+            <li><a href="{{route('users.articles')}}">I miei articoli</a></li>
             <li><a href="{{route('users.profile')}}">Profilo utente</a></li>
             <li>
 

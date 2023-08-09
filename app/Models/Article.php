@@ -10,4 +10,22 @@ class Article extends Model
     use HasFactory;
     
     protected $fillable = ['title', 'content'];
+
+    public function user () {
+
+        return $this->belongsTo(User::class);
+
+    }
+
+    public function images () {
+
+        return $this->hasMany(Image::class);
+
+    }
+
+    public function tags () {
+
+        return $this->belongsToMany(Tag::class);
+
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
+use App\Models\Image;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreArticleRequest;
@@ -25,35 +27,63 @@ class ArticleController extends Controller
     //Visualizzazione del form di aggiunta articoli
     public function create () {
 
-        return view('articles.create');
+        $tags = Tag::all();
+
+        return view('articles.create',[
+
+            'tags' => $tags
+
+        ]);
 
     }
 
     //Aggiunta di un articolo
     public function store (StoreArticleRequest $request) {
 
-        $imageId = uniqid();
-
         $article = new Article;
 
         $article->title = $request->titolo;
         $article->content = $request->contenuto;
 
+        $article->user_id = auth()->user()->id;
+
+        $article->save();
+
         if ($request->file('immagine')) {
 
-            $article->image = 'image-article-' . $imageId . '.' . $request->file('immagine')->extension();
-            $article->image_id = $imageId;
-            $fileName = 'image-article-' . $imageId . '.' . $request->file('immagine')->extension();
-            $image = $request->file('immagine')->storeAs('public', $fileName);
+            $images = $request->file('immagine');
 
-        } else {
+            $images_columns = [];
 
-            $article->image = '';
-            $article->image_id = '';
+            foreach ( $images as $image ) {
+
+                $imageId = uniqid();
+
+                $fileName = 'image-article-' . $imageId . '.' . $image->extension();
+
+                $images_columns[] = ['file_name' => $fileName, 'file_id' => $image_id, 'article_id' => $article->id];
+
+                Image::insert( 
+
+                    $images_columns
+    
+                );
+
+                $image = $image->storeAs('public', $fileName);
+
+            }
 
         }
 
-        $article->save();
+        $tags = $request->tag;
+
+        foreach ($tags as $tag) {
+
+            $currentArticle = Article::find($article->id);
+
+            $currentArticle->tags()->attach($tag);
+
+        }
 
         return redirect()->route('home');
 
@@ -64,11 +94,22 @@ class ArticleController extends Controller
 
         $article = Article::find($id);
 
-        return view('articles.edit', [
+        $tags = Tag::all();
 
-            'article' => $article
+        if ( auth()->user()->id == $article->user_id ) {
 
-        ]);
+            return view('articles.edit', [
+
+                'article' => $article,
+                'tags' => $tags
+
+            ]);
+
+        } else {
+
+            return redirect()->route('home');
+
+        }
 
     }
 
@@ -77,31 +118,56 @@ class ArticleController extends Controller
 
         $article = Article::find($id);
 
-        $article->title = $request->titolo;
-        $article->content = $request->contenuto;
+        if ( auth()->user()->id == $article->user_id ) {
 
-        if ($request->file('immagine')) {
+            $article->title = $request->titolo;
+            $article->content = $request->contenuto;
 
-            if ( $article->image_id !== '' ) {
+            $article->save();
 
-                $imageId = $article->image_id;
+            if ($request->file('immagine')) {
 
-            } else {
+                $images = $request->file('immagine');
+    
+                foreach ( $images as $image ) {
+    
+                    $imageId = uniqid();
+    
+                    $fileName = 'image-article-' . $imageId . '.' . $image->extension();
+    
+                    $article_image = new Image;
+    
+                    $article_image->file_name = $fileName;
+                    $article_image->file_id = $imageId;
+                    $article_image->article_id = $article->id;
+    
+                    $article_image->save();
+    
+                    $image = $image->storeAs('public', $fileName);
+    
+                }
+    
+            }
 
-                $imageId = uniqid();
+            $tags = $request->tag;
+
+            $currentArticle = Article::find($article->id);
+
+            $currentArticle->tags()->detach();
+
+            foreach ($tags as $tag) {
+
+                $currentArticle->tags()->attach($tag);
 
             }
 
-            $article->image = 'image-article-' . $imageId . '.' . $request->file('immagine')->extension();
-            $article->image_id = $imageId;
-            $fileName = 'image-article-' . $imageId . '.' . $request->file('immagine')->extension();
-            $image = $request->file('immagine')->storeAs('public', $fileName);
+            return redirect()->route('articles.edit', $id);
+
+        } else {
+
+            return redirect()->route('home');
 
         }
-
-        $article->save();
-
-        return redirect()->route('articles.edit', $id);
 
     }
 

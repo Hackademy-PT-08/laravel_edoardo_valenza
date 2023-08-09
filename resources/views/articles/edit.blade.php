@@ -2,6 +2,8 @@
 
     <h1>Modifica l'articolo: {{$article->title}}</h1>
 
+    <p><a href="{{route('tags.create')}}">Aggiungi nuovo tag</a></p>
+
     <form action="/articoli/modifica/{{$article->id}}" method="post" enctype="multipart/form-data">
     
         @csrf
@@ -12,7 +14,17 @@
 
         <textarea name="contenuto" placeholder="Contenuto" cols="30" rows="10">{{$article->content}}</textarea>
 
-        <input type="file" name="immagine">
+        <input type="file" name="immagine[]" id="immagine" multiple>
+
+        <select name="tag[]" id="tag" multiple>
+
+            @foreach ($tags as $tag)
+            
+                <option value="{{$tag->id}}">{{$tag->name}}</option>
+
+            @endforeach
+
+        </select>
 
         <input type="submit" value="Aggiorna">
 
